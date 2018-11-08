@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace ObserverPatternDemo.Implemantation.Observable
 {
@@ -7,9 +8,22 @@ namespace ObserverPatternDemo.Implemantation.Observable
     {
         private List<IObserver<WeatherInfo>> observers;
 
+        public Action<WeatherData, WeatherInfo> OnWeatherChange;
+
         public WeatherData()
         {
             observers = new List<IObserver<WeatherInfo>>();
+        }
+
+        public void WeatherGenerateInfo()
+        {
+            Random random = new Random();
+            while (true)
+            {
+                WeatherInfo weatherInfo = new WeatherInfo(random.Next(-25, 25), random.Next(0, 300), random.Next(90));
+                OnWeatherChange?.Invoke(this, weatherInfo);
+                Thread.Sleep(5000);
+            }          
         }
 
         public void Notify(IObservable<WeatherInfo> sender, WeatherInfo info)
@@ -35,7 +49,7 @@ namespace ObserverPatternDemo.Implemantation.Observable
             {
                 throw new ArgumentException(nameof(observer), "observer already contains");
             }
-
+            OnWeatherChange += observer.Update;
             observers.Add(observer);
         }
 
@@ -46,6 +60,7 @@ namespace ObserverPatternDemo.Implemantation.Observable
                 throw new ArgumentException(nameof(observer), "can`t be null");
             }
 
+            OnWeatherChange -= observer.Update;
             observers.Remove(observer);
         }
     }

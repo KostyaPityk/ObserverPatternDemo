@@ -8,10 +8,13 @@ namespace ObserverPatternDemo.Implemantation.Observers
     public class StatisticReport : IObserver<WeatherInfo>
     {
         private List<WeatherInfo> statisticWeather;
+        private IObservable<WeatherInfo> _observable;
 
-        public StatisticReport()
+        public StatisticReport(IObservable<WeatherInfo> observable)
         {
             statisticWeather = new List<WeatherInfo>();
+            this._observable = observable;
+            observable.Register(this);
         }
 
         public StatisticReport(List<WeatherInfo> dataInfo) => statisticWeather = dataInfo;
@@ -28,6 +31,8 @@ namespace ObserverPatternDemo.Implemantation.Observers
             }
 
             statisticWeather.Add(info);
+
+            Show(ToString());
         }
 
         public override string ToString()
@@ -40,5 +45,7 @@ namespace ObserverPatternDemo.Implemantation.Observers
 
             return result.ToString();
         }
+
+        public void Show(string message) => Console.WriteLine(message);
     }
 }
